@@ -9,15 +9,14 @@ def configure_motors():
     oDrive1.config.enable_brake_resistor
     oDrive1.config.brake_resistance = 0.55
     oDrive1.config.dc_max_negative_current = -0.01
+
     # motor1
     oDrive1.axis1.motor.config.current_lim = 10
     oDrive1.axis1.controller.config.vel_limit = 2
     oDrive1.axis1.motor.config.torque_constant = 8.27 / 270
     oDrive1.axis1.motor.config.pole_pairs = 7
     oDrive1.axis1.motor.config.motor_type = 0
-
     oDrive1.axis1.controller.config.vel_limit = 4
-
     oDrive1.axis1.requested_state = AXIS_STATE_FULL_CALIBRATION_SEQUENCE
     while oDrive1.axis1.current_state != AXIS_STATE_IDLE:
         time.sleep(0.1)
@@ -49,7 +48,7 @@ def filtered_controll():
     oDrive1.axis1.controller.config.input_filter_bandwidth = 2.0
     oDrive1.axis1.controller.config.input_mode = INPUT_MODE_POS_FILTER
 
-def rotate_motor():
+def move_absolute():
     run = True
     while run == True:
         print(oDrive1.axis1.controller.input_pos)
@@ -71,19 +70,34 @@ def move_relative():
             #To set the goal relative to the current actual position, use 'from_goal_point = False'
             #To set the goal relative to the previous destination, use 'from_goal_point = True'
 
-#konfigurer motorene
-configure_motors()
+#funksjon for å bevege arm til sted i kordinatsystem
+def inverse_kinematics():
+    print("inverse kinematics")
 
-#velg inputmode
-inputmode = input("select inputmode 1, 2 (trajectory), 3 (filtered)")
-if inputmode == '1':
-    oDrive1.axis1.requested_state = AXIS_STATE_CLOSED_LOOP_CONTROL
-elif inputmode == '2':
-    trajectory_controll()
-elif inputmode == '3':
-    filtered_controll()
+def main():
+    #konfigurer motorene
+    configure_motors()
 
-#posisjons kontroll relativ til forige posisjon eller bare bassert på absolutt posisjon
-move_relative()
-#rotate_motor()
+    #velg inputmode
+    inputMode = input("select inputmode 1, 2 (trajectory), 3 (filtered)")
+    if inputMode == '1':
+        oDrive1.axis1.requested_state = AXIS_STATE_CLOSED_LOOP_CONTROL
+    elif inputMode == '2':
+        trajectory_controll()
+    elif inputMode == '3':
+        filtered_controll()
+
+    #posisjons kontroll relativ til forige posisjon eller bare bassert på absolutt posisjon
+    positionMode = input('select position mode 1 (kinematics), 2 (move relative), 3 (move absolute')
+    if positionMode == '1':
+        inverse_kinematics()
+    elif positionMode == '2':
+        move_relative()
+    elif positionMode == '3':
+        move_absolute()
+
+
+
+
+main()
 
