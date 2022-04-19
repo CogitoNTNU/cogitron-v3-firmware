@@ -59,8 +59,23 @@ def rotate_motor():
         else:
             oDrive1.axis1.controller.input_pos = float(x)
 
+def move_relative():
+    run = True
+    while run == True:
+        print(oDrive1.axis1.controller.input_pos)
+        x = input("set input")
+        if x == 'e':
+            break
+        else:
+            oDrive1.axis1.controller.move_incremental(x, False)
+            #To set the goal relative to the current actual position, use 'from_goal_point = False'
+            #To set the goal relative to the previous destination, use 'from_goal_point = True'
+
+#konfigurer motorene
 configure_motors()
-inputmode = input("select inputmode 1, 2, 3")
+
+#velg inputmode
+inputmode = input("select inputmode 1, 2 (trajectory), 3 (filtered)")
 if inputmode == '1':
     oDrive1.axis1.requested_state = AXIS_STATE_CLOSED_LOOP_CONTROL
 elif inputmode == '2':
@@ -68,6 +83,7 @@ elif inputmode == '2':
 elif inputmode == '3':
     filtered_controll()
 
-
-rotate_motor()
+#posisjons kontroll relativ til forige posisjon eller bare bassert på absolutt posisjon
+move_relative()
+#rotate_motor()
 
