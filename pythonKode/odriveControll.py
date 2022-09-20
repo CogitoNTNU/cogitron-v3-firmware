@@ -73,6 +73,7 @@ def move_relative():
 #funksjon for å bevege arm til sted i kordinatsystem
 def inverse_kinematics():
     print("inverse kinematics")
+    #Inverskinematikk-utregning kommer snart!
 
 def main():
     #konfigurer motorene
