@@ -4,6 +4,12 @@ import time
 
 oDrive1 = odrive.find_any()
 
+def configure_CAN():
+    oDrive1.axis0.config.can.node_id = 3
+    oDrive1.axis1.config.can.node_id = 1
+    oDrive1.can.config.baud_rate = 500000
+    oDrive1.save_configuration()
+    oDrive1.reboot()
 
 def configure_motors():
     oDrive1.config.enable_brake_resistor
@@ -76,6 +82,9 @@ def inverse_kinematics():
     #Inverskinematikk-utregning kommer snart!
 
 def main():
+    #konfigurer CAN
+    configure_CAN()
+
     #konfigurer motorene
     configure_motors()
 
