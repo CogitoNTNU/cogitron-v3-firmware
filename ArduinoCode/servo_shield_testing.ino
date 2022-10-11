@@ -53,7 +53,7 @@ void loop() {
       String input = Serial.readStringUntil('\n');
       uint16_t input_as_int = input.toInt();
       set_angle(0, input_as_int);
-      String input = Serial.readStringUntil('\n');
+      input = Serial.readStringUntil('\n');
       input_as_int = input.toInt();
       set_angle(1, input_as_int);
   }
