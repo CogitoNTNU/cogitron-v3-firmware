@@ -1,15 +1,16 @@
 import odrive
 from odrive.enums import *
 import time
+from numpy import arctan2, sqrt, pi
 
 oDrive1 = odrive.find_any()
 
-def configure_CAN():
+#def configure_CAN():
     #oDrive1.axis0.config.can.node_id = 3
-    oDrive1.axis1.config.can.node_id = 1
-    oDrive1.can.config.baud_rate = 500000
-    oDrive1.save_configuration()
-    oDrive1.reboot()
+    #oDrive1.axis1.config.can.node_id = 1
+    #oDrive1.can.config.baud_rate = 500000
+    #oDrive1.save_configuration()
+    #oDrive1.reboot()
 
 def configure_motors():
     oDrive1.config.enable_brake_resistor
@@ -22,7 +23,6 @@ def configure_motors():
     oDrive1.axis1.motor.config.torque_constant = 8.27 / 270
     oDrive1.axis1.motor.config.pole_pairs = 7
     oDrive1.axis1.motor.config.motor_type = 0
-    oDrive1.axis1.controller.config.vel_limit = 4
     oDrive1.axis1.requested_state = AXIS_STATE_FULL_CALIBRATION_SEQUENCE
     while oDrive1.axis1.current_state != AXIS_STATE_IDLE:
         time.sleep(0.1)
@@ -79,12 +79,21 @@ def move_relative():
 #funksjon for å bevege arm til sted i kordinatsystem
 def inverse_kinematics():
     print("inverse kinematics")
-    #Inverskinematikk-utregning kommer snart!
+    run = True
+    while run:
+        print(oDrive1.axis1.controller.input_pos)
+        run_flag = input('Press e to exit, or any other key to continue: ')         #Veien ut fra for-løkka
+        if run_flag == 'e':
+            break
+        else:
+            # Inverskinematikken til motor 1
+            # Denne else-blokken skal utvides videre når den andre motoren blir montert.
+            x = float(input('Insert x coordinate of the arm: '))
+            z = float(input('Insert z coordinate of the arm: '))
+            oDrive1.axis1.controller.input_pos = arctan2(sqrt(4 - (z**2 + x**2 - 2)**2),(z**2 + x**2 - 2))/(2*pi)
+            # Her kommer oDrive1.axis0.controller.input_pos
 
 def main():
-    #konfigurer CAN
-    configure_CAN()
-
     #konfigurer motorene
     configure_motors()
 

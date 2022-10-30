@@ -19,10 +19,16 @@ void setup() {
 void loop() {
   canMsg.can_id = 0x036;                      //CAN id can be changed
   canMsg.can_dlc = 8;                         //CAN data length chosen at 8
-  //canMsg.data[0] = XXX;                     //Update values in the CAN bus
-  //canMsg.data[1] = XXX;
+  canMsg.data[0] = 3;
+  canMsg.data[1] = 0;                     //Update values in the CAN bus
+  canMsg.data[2] = 0;
+  canMsg.data[3] = 0;
+  canMsg.data[4] = 0;
+  canMsg.data[5] = 0;
+  canMsg.data[6] = 0;
+  canMsg.data[7] = 0;
   //......
 
-  mcp.sendMessage(&canMsg);                   //Sends CAN message
+  mcp2515.sendMessage(&canMsg);                   //Sends CAN message
   delay(1000);
 }
