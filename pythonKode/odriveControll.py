@@ -5,12 +5,12 @@ from numpy import arctan2, sqrt, pi
 
 oDrive1 = odrive.find_any()
 
-#def configure_CAN():
+def configure_CAN():
     #oDrive1.axis0.config.can.node_id = 3
-    #oDrive1.axis1.config.can.node_id = 1
-    #oDrive1.can.config.baud_rate = 500000
-    #oDrive1.save_configuration()
-    #oDrive1.reboot()
+    oDrive1.axis1.config.can.node_id = 1
+    oDrive1.can.config.baud_rate = 500000
+    oDrive1.save_configuration()
+    oDrive1.reboot()
 
 def configure_motors():
     oDrive1.config.enable_brake_resistor
@@ -97,6 +97,9 @@ def main():
     #konfigurer motorene
     configure_motors()
 
+    #konfigurer CAN-modulen
+    configure_CAN()
+
     #velg inputmode
     inputMode = input("select inputmode 1, 2 (trajectory), 3 (filtered)")
     if inputMode == '1':
@@ -114,9 +117,6 @@ def main():
         move_relative()
     elif positionMode == '3':
         move_absolute()
-
-
-
 
 main()
 
