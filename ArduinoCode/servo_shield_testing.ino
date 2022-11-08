@@ -1,4 +1,5 @@
 #include <Wire.h>
+#include <string.h>
 #include <Adafruit_PWMServoDriver.h>
 
 // called this way, it uses the default address 0x40
@@ -15,10 +16,15 @@ Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
 // our servo # counter
 uint8_t servonum = 0;
 
+
+int prevangle_1 = 81;
+int prevangle_2 = 75;
+int num_ops = 50;
+
 void setup() {
   Serial.begin(9600);
-
   pwm.begin();
+
   /*
    * In theory the internal oscillator (clock) is 25MHz but it really isn't
    * that precise. You can 'calibrate' this by tweaking this number until
@@ -44,17 +50,37 @@ void setup() {
 void set_angle(int servonum,int angle) {
   uint16_t pulselength = map(angle, 0, 180, SERVOMIN, SERVOMAX);
   pwm.setPWM(servonum, 0, pulselength);
-  delay(10);
+  delay(1);
 }
 
 void loop() {
   // Drive each servo one at a time using setPWM()
+    int x;
+
   if(Serial.available()){
-      String input = Serial.readStringUntil('\n');
-      uint16_t input_as_int = input.toInt();
-      set_angle(0, input_as_int);
-      input = Serial.readStringUntil('\n');
-      input_as_int = input.toInt();
-      set_angle(1, input_as_int);
+    String input = Serial.readStringUntil('\n');
+    int index = input.indexOf(',');
+
+    int angle1 = input.substring(0, index).toInt();
+    int angle2 = input.substring(index +1).toInt();
+    
+    for (int i = 0; i < num_ops; i++) {
+      int target1 = angle1 - prevangle_1;
+      int temp = target1 * i / num_ops;
+      target1 = prevangle_1 + temp;
+
+      int target2 = angle2 - prevangle_2;
+      temp = target2 * i / num_ops;
+      target2 = prevangle_2 + temp;
+
+      set_angle(0, target1);
+      set_angle(1, target2);
+    }
+
+    prevangle_1 = angle1;
+    prevangle_2 = angle2;
+
+    delay(10);
   }
+
 }
