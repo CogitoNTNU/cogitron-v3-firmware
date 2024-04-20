@@ -6,65 +6,63 @@ import threading
 
 pygame.init()
 screen = pygame.display.set_mode((1280, 720))
-oDrive = odrive.find_any()
 
+oDrive1 = odrive.find_any()
 
 def configure_motors():
-    oDrive.config.enable_brake_resistor
-    oDrive.config.brake_resistance = 0.55
-    oDrive.config.dc_max_negative_current = -0.01
-    # motor0
-    oDrive.axis0.motor.config.current_lim = 10
-    oDrive.axis0.controller.config.vel_limit = 2
-    oDrive.axis0.motor.config.torque_constant = 8.27 / 270
-    oDrive.axis0.motor.config.pole_pairs = 7
-    oDrive.axis0.motor.config.motor_type = 0
-    oDrive.axis0.controller.config.vel_limit = 4
+
+    oDrive1.config.enable_brake_resistor
+    oDrive1.config.brake_resistance = 0.55
+    oDrive1.config.dc_max_negative_current = -0.02
+    # moto0
+    oDrive1.axis0.motor.config.current_lim = 30
+    oDrive1.axis0.motor.config.torque_constant = 8.27 / 270
+    oDrive1.axis0.motor.config.pole_pairs = 7
+    oDrive1.axis0.motor.config.motor_type = 0
+    oDrive1.axis0.controller.config.vel_limit = 10
     #motor1
-    oDrive.axis1.motor.config.current_lim = 10
-    oDrive.axis1.controller.config.vel_limit = 2
-    oDrive.axis1.motor.config.torque_constant = 8.27 / 270
-    oDrive.axis1.motor.config.pole_pairs = 7
-    oDrive.axis1.motor.config.motor_type = 0
-    oDrive.axis1.controller.config.vel_limit = 4
+    oDrive1.axis1.motor.config.current_lim = 30
+    oDrive1.axis1.motor.config.torque_constant = 8.27 / 270
+    oDrive1.axis1.motor.config.pole_pairs = 7
+    oDrive1.axis1.motor.config.motor_type = 0
+    oDrive1.axis1.controller.config.vel_limit = 10
+
+
     
-    
+  
     
 def calibrate_motors():
     #Motor 0
-    oDrive.axis0.requested_state = AXIS_STATE_FULL_CALIBRATION_SEQUENCE
-    oDrive.axis0.controller.config.circular_setpoints = True
-    while oDrive.axis1.current_state != AXIS_STATE_IDLE:
+    oDrive1.axis0.requested_state = AXIS_STATE_FULL_CALIBRATION_SEQUENCE
+    while oDrive1.axis0.current_state != AXIS_STATE_IDLE:
         time.sleep(0.1)
-    if odrive.axis0.encoder.config.pre_calibrated == False:
+    
+    
+    if oDrive1.axis0.encoder.config.pre_calibrated == False:
         print("MOTOR 0 CALIBRATION ERROR!")
     
     #Motor 1
-    oDrive.axis1.requested_state = AXIS_STATE_FULL_CALIBRATION_SEQUENCE
-    oDrive.axis1.controller.config.circular_setpoints = True
-    while oDrive.axis1.current_state != AXIS_STATE_IDLE:
+    oDrive1.axis1.requested_state = AXIS_STATE_FULL_CALIBRATION_SEQUENCE
+    while oDrive1.axis1.current_state != AXIS_STATE_IDLE:
         time.sleep(0.1)
     
     
-    if odrive.axis1.encoder.config.pre_calibrated == False:
+    if oDrive1.axis1.encoder.config.pre_calibrated == False:
         print("MOTOR 1 CALIBRATION ERROR!")
-    else:
-        oDrive.save_configuration()
-        oDrive.reboot()
-        oDrive = odrive.find_any()
-
+       
+        
 def velocity_conrol():
-    oDrive.axis0.requested_state = AXIS_STATE_CLOSED_LOOP_CONTROL
-    #oDrive0.axis0.requested_state = AxisState.CLOSED_LOOP_CONTROL
-    oDrive.axis0.controller.config.circular_setpoints = True
-    oDrive.axis0.controller.config.control_mode = CONTROL_MODE_VELOCITY_CONTROL
-    #oDrive0.axis0.controller.config.control_mode = ControlMode.VELOCITY_CONTROL
+    oDrive1.axis0.requested_state = AXIS_STATE_CLOSED_LOOP_CONTROL
+    #oDrive10.axis0.requested_state = AxisState.CLOSED_LOOP_CONTROL
+    oDrive1.axis0.controller.config.circular_setpoints = True
+    oDrive1.axis0.controller.config.control_mode = CONTROL_MODE_VELOCITY_CONTROL
+    #oDrive10.axis0.controller.config.control_mode = ControlMode.VELOCITY_CONTROL
 
-    oDrive.axis1.requested_state = AXIS_STATE_CLOSED_LOOP_CONTROL
-    #oDrive0.axis0.requested_state = AxisState.CLOSED_LOOP_CONTROL
-    oDrive.axis1.controller.config.circular_setpoints = True
-    oDrive.axis1.controller.config.control_mode = CONTROL_MODE_VELOCITY_CONTROL
-    #oDrive0.axis0.controller.config.control_mode = ControlMode.VELOCITY_CONTROL
+    oDrive1.axis1.requested_state = AXIS_STATE_CLOSED_LOOP_CONTROL
+    #oDrive10.axis0.requested_state = AxisState.CLOSED_LOOP_CONTROL
+    oDrive1.axis1.controller.config.circular_setpoints = True
+    oDrive1.axis1.controller.config.control_mode = CONTROL_MODE_VELOCITY_CONTROL
+    #oDrive10.axis0.controller.config.control_mode = ControlMode.VELOCITY_CONTROL
     
 def controllMotor0():
     run = True
@@ -74,14 +72,14 @@ def controllMotor0():
         for event in events:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_UP:
-                    vel1 += 1
+                    vel += 1
                     print("Motor 0 vel: ",vel)
                 if event.key == pygame.K_DOWN:
-                    vel1 -= 1
+                    vel -= 1
                     print("Motor 0 vel: ",vel)
                 if event.key == pygame.K_q:
                     run = False
-        oDrive.axis0.controller.input_vel = vel
+        oDrive1.axis0.controller.input_vel = vel
 
 def controllMotor1():
     run = True
@@ -91,14 +89,14 @@ def controllMotor1():
         for event in events:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RIGHT:
-                    vel1 += 1
+                    vel += 1
                     print("Motor 1 vel: ",vel)
                 if event.key == pygame.K_LEFT:
-                    vel1 -= 1
+                    vel -= 1
                     print("Motor 1 vel: ",vel)
                 if event.key == pygame.K_q:
                     run = False
-        oDrive.axis1.controller.input_vel = vel
+        oDrive1.axis1.controller.input_vel = vel
 
 
 def selectControlMode():
@@ -118,11 +116,9 @@ def runMotors():
     t0.start()
     t1.start()
 
-    t0.join()
-    t1.join()
-
 def main():
     #konfigurer motorene
+
     configure_motors()
     calibrate_motors()
     velocity_conrol()
